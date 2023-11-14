@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <default sync-j="2"/>
+
+  <remote fetch="https://git.yoctoproject.org/git" name="yocto"/>
+  <remote fetch="https://github.com/Freescale" name="freescale"/>
+  <remote fetch="https://github.com/openembedded" name="oe"/>
+  <remote fetch="https://github.com/BraneAudio" name="brane"/>
+
+   <project name="meta-freescale"
+            path="sources/meta-freescale"
+            remote="freescale"
+            revision="2e785f257ad98581b684f0e32f6d4bb96faefb10"/>
+
+   <project name="meta-openembedded"
+            path="sources/meta-openembedded"
+            remote="oe"
+            revision="30f4c2b3ae182513b967185e06bc8409a0ee6092"/>
+
+   <project name="poky"
+            path="sources/poky"
+            remote="yocto"
+            revision="08d954474b8177f67f1f0379268ceb5db2343cc8"/>
+
+<!-- Commented out until it actually exists.
+   <project name="brane-yocto"
+            path="sources/brane-yocto"
+            remote="brane"
+            revision="08d954474b8177f67f1f0379268ceb5db2343cc8"/>
+-->
+</manifest>

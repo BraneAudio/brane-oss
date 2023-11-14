@@ -1,0 +1,122 @@
+# brane-oss
+
+This is a repository setup to allow one to be able to setup a Yocto
+environment and download and build all of the open source packages
+in the same way as they are built by Brane Audio.
+
+One could always go and get copies of the various Yocto layers along with
+the Brane layers and do things on their own, but below is a way to try and
+make the process relatively simple.
+
+The image as it is built might include or exclude some files in the image itself that
+is different than what Brane distributes, but the intent is just to provide an easy
+mechanism to allow one to be able to build packages the same way and not necessarily
+exactly match the files in the image.  For instance, in the real image distributed by
+Brane Audio there are no GPL3 items in it, but this image might have some just due to
+how it is created.
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+NOTE: The meta-freescale layer is used in the Brane images which has its own EULA.
+While looking into the Freescale EULA and what we use from the meta-freescale layer,
+it was seen that we do not seem to be using any of the recipes that require it.
+There is a class fsl-eula-unpack.bbclass in the recipe layer that prevents recipes
+that need the EULA to be accepted from suceeding.  Plus, we are not using anything
+that requires the EULA in the SCR-*.txt file in the layer either.  Everything we use
+from the layer is under open-source licenses and not any proprietary license.
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+Steps to Build an Image with the Open Source packages used by Brane.
+
+1) Insure all of the required items that are needed to be installed have been.
+-------------------------------------------------------------------------------------
+A) Yocto requires many items.  Consult the Yocto manual for current requirements,
+but when this was written, it was the following:
+
+$: sudo apt-get install gawk wget git diffstat unzip texinfo gcc subversion \
+     build-essential chrpath socat cpio python3 python3-pip python3-pexpect \
+     xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev \
+     pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool libgcrypt-dev
+
+B) You may also need to handle conversion from python2 to python3 (may only be
+needed for Ubuntu):
+
+$: sudo apt-get install python-is-python3
+
+C) The repo tool used to download yocto sources needs curl:
+
+$: sudo apt-get install curl
+
+2) The repo tool will need some additional git setup before first us if it has
+not been done:
+-------------------------------------------------------------------------------------
+$ git config --global user.name "Your Name"
+$ git config --global user.email "Your Email"
+$ git config --list
+
+3) To use a manifest file with repo, the 'repo' tool must be installed first.
+This does that by putting it in your home directory under a bin subdirectory.
+-------------------------------------------------------------------------------------
+$: mkdir ~/bin
+$: curl http://commondatastorage.googleapis.com/git-repo-downloads/repo  > ~/bin/repo
+$: chmod a+x ~/bin/repo
+$: PATH=${PATH}:~/bin
+
+4) To get the layer manifest to work with repo, it must be part of a git repo.
+(Assumes you are at the top level of this repository heirarchy.)
+-------------------------------------------------------------------------------------
+$: cd layer-manifest
+$: git init
+$: git add -A
+$: git commit -m "Creating way to get git repo to work with local manifest file"
+$: cd ..
+
+5) To get the yocto layer repos downloaded, run from this directory: 
+-------------------------------------------------------------------------------------
+$: repo init -u layer-manifest
+$: repo sync
+
+When that completes, there should be a bunch of yocto layer directories in the sources
+subdirectory.
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+Temporary Requirement
+
+When this was last edited, everything was being built for the langdale branch of
+Yocto.  The meta-freescale layer at the time was only compatible with kirkstone.
+If you try to build an image without the layer being compatible, you will get en error
+message like:
+   ERROR: Layer freescale-layer is not compatible with the core layer which only
+   supports these series: langdale (layer is compatible with kirkstone)
+
+To make it compatible with langdale in order to do image builds until we actually
+update the layer, you need to do the following:
+
+- Open sources/meta-freescale/conf/layer.conf in a text editor.
+- Find the line that begins "LAYERSERIES_COMPAT_freescale-layer".
+- Add "langdale" to the list of compatibile layers, i.e. after done it should look like:
+     LAYERSERIES_COMPAT_freescale-layer = "kirkstone langdale"
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+6) Run the following command to setup the bitbake environment to build an image in the
+directory "brane-machine-build".  It will use the distro of "brane-oss-dist" and machine
+of "brane-machine".  It will also create the bblayers.conf and local.conf files
+to allow you to build images if they do not already exist in the conf subdirectory.
+-------------------------------------------------------------------------------------
+$: source brane-init-build-environment.sh
+
+7) Build an image with the OSS packages used by Brane being built.
+-------------------------------------------------------------------------------------
+$: bitbake brane-oss-image
+
+Wait for it to complete.
+
+
+
