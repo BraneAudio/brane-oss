@@ -22,10 +22,8 @@
             remote="yocto"
             revision="08d954474b8177f67f1f0379268ceb5db2343cc8"/>
 
-<!-- Commented out until it actually exists.
    <project name="brane-yocto"
             path="sources/brane-yocto"
             remote="brane"
-            revision="08d954474b8177f67f1f0379268ceb5db2343cc8"/>
--->
+            revision="248dd6835c89a185b5a62e015365ca98b2e53785"/>
 </manifest>
