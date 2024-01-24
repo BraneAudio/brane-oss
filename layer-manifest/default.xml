@@ -25,5 +25,5 @@
    <project name="brane-yocto"
             path="sources/brane-yocto"
             remote="brane"
-            revision="248dd6835c89a185b5a62e015365ca98b2e53785"/>
+            revision="3e84a2edfa6574d59b99dbd118bd7f2763a5efc5"/>
 </manifest>
